@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "happy-cli"
+version = "0.1.0"
+description = "Bioinformatics benchmarking toolkit for evaluating variant calling pipelines using hap.py"
+requires-python = ">=3.9"
+dependencies = [
+    "click>=8.0",
+]
+
+[project.scripts]
+happy = "happy_cli.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

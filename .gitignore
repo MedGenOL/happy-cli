@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Genomic data files (large, download separately)
+*.vcf.gz
+*.vcf.gz.tbi
+*.bed
+*.bed.gz
+*.fa
+*.fa.fai
+*.fa.dict
+*.fasta
+*.fasta.fai
+*.fasta.dict
+
+# IDE
+.idea/
+.vscode/
+.qodo/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# hap.py output
+*.summary.csv
+*.roc.*
+*.counts.csv
