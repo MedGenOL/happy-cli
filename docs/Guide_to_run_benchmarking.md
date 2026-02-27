@@ -34,6 +34,9 @@ Make sure you have:
 6. A **high-confidence BED file** (included in `data/`):
    - Example: `data/ConfidentRegions/ConfidentRegions.bed`
 
+7. **For exome only**: a **target regions BED file** from your capture kit vendor:
+   - Example: `data/ConfidentRegions/DRAGEN_Illumina_exome/hg38_Twist_Bioscience_for_Illumina_Exome_2_5_Mito.bed`
+
 ---
 
 ## How to Run
@@ -46,6 +49,9 @@ Make sure you have:
    ```
 
 3. **Run the command**:
+
+   ### Whole Genome (WGS)
+
    ```bash
    happy \
      data/PlatinumGenomesIllumina/vcf/NA12877.vcf.gz \
@@ -54,6 +60,31 @@ Make sure you have:
      -f data/ConfidentRegions/ConfidentRegions.bed \
      -o /path/to/output/NA12877_vs_DRAGEN
    ```
+
+   ### Exome (WES)
+
+   For exome data, add `-T` with your capture kit target regions BED, and
+   use `--engine vcfeval` with `--pass-only` for more accurate results:
+
+   ```bash
+   happy \
+     data/PlatinumGenomesIllumina/vcf/NA12877.vcf.gz \
+     /path/to/dragen_exome_output/P23_001471.hard-filtered.vcf.gz \
+     -r /path/to/hg38_reference/WholeGenomeFasta/genome.fa \
+     -f data/ConfidentRegions/ConfidentRegions.bed \
+     -T /path/to/exome_capture_targets.bed \
+     -o /path/to/output/NA12877_vs_DRAGEN_exome \
+     --engine vcfeval \
+     --pass-only
+   ```
+
+   **What `-f` and `-T` do:**
+   - `-f` (confident regions) — defines where the truth set is reliable.
+     Variants outside are classified as unknown, not false positives.
+   - `-T` (target regions) — restricts analysis to your exome capture
+     footprint. Variants outside are removed entirely.
+   - hap.py intersects them internally — no need to pre-intersect with
+     bedtools.
 
    All paths are normal paths on your machine. The tool handles Docker
    volume mounting automatically.
@@ -69,6 +100,19 @@ Make sure you have:
      -o /path/to/output/NA12877_vs_DRAGEN \
      --dry-run
    ```
+
+5. **Run in background** (optional): Add `-bg` to run the process in the
+   background. Output is logged to `happy_YYYYMMDD_HHMMSS.log`:
+   ```bash
+   happy \
+     data/PlatinumGenomesIllumina/vcf/NA12877.vcf.gz \
+     /path/to/dragen_output/P23_001471.hard-filtered.vcf.gz \
+     -r /path/to/hg38_reference/WholeGenomeFasta/genome.fa \
+     -f data/ConfidentRegions/ConfidentRegions.bed \
+     -o /path/to/output/NA12877_vs_DRAGEN \
+     -bg
+   ```
+   You can then check progress with `tail -f happy_YYYYMMDD_HHMMSS.log`.
 
 ---
 

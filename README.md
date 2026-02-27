@@ -28,6 +28,8 @@ or your system's package manager.
 
 ## Usage
 
+### Whole Genome (WGS)
+
 ```bash
 happy \
   data/PlatinumGenomesIllumina/vcf/NA12877.vcf.gz \
@@ -35,6 +37,36 @@ happy \
   -r /path/to/hg38/genome.fa \
   -f data/ConfidentRegions/ConfidentRegions.bed \
   -o /path/to/output/NA12877_vs_pipeline
+```
+
+### Exome (WES)
+
+For exome benchmarking, add `-T` with your capture kit target regions BED.
+Use `--engine vcfeval` and `--pass-only` for best results:
+
+```bash
+happy \
+  data/PlatinumGenomesIllumina/vcf/NA12877.vcf.gz \
+  /path/to/your_exome_output.vcf.gz \
+  -r /path/to/hg38/genome.fa \
+  -f data/ConfidentRegions/ConfidentRegions.bed \
+  -T /path/to/exome_capture_targets.bed \
+  -o /path/to/output/NA12877_vs_pipeline \
+  --engine vcfeval \
+  --pass-only
+```
+
+The `-f` flag defines where the truth set is reliable (confident regions).
+The `-T` flag restricts analysis to your exome capture footprint.
+hap.py intersects them internally — no need to pre-intersect with bedtools.
+
+### Background mode
+
+Add `-bg` to run in the background. Output is logged to
+`happy_YYYYMMDD_HHMMSS.log` in the current directory:
+
+```bash
+happy ... -bg
 ```
 
 All paths are **normal host paths** — the tool handles Docker volume
