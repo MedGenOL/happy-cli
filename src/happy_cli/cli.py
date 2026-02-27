@@ -1,5 +1,8 @@
 """CLI entry point for happy-cli, a Docker wrapper around hap.py."""
 
+import getpass
+import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -225,6 +228,12 @@ def main(ctx, truth_vcf, query_vcf, reference, regions, targets, output_prefix,
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         log_file = Path.cwd() / f"happy_{timestamp}.log"
         with open(log_file, "w") as log:
+            log.write(f"Date:    {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            log.write(f"User:    {getpass.getuser()}\n")
+            log.write(f"Host:    {platform.node()}\n")
+            log.write(f"Command: {' '.join(cmd)}\n")
+            log.write(f"{'-' * 72}\n")
+            log.flush()
             subprocess.Popen(
                 cmd, stdout=log, stderr=log,
                 start_new_session=True,
