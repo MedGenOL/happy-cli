@@ -1,9 +1,13 @@
 # happy-cli
 
-A lightweight CLI for benchmarking variant calling pipelines using
+A lightweight CLI wrapper for running
 [hap.py](https://github.com/Illumina/hap.py) in Docker.
 Built for lab teams that need to run benchmarking periodically when
 sequencing technology or protocols change.
+
+**hap.py** (Haplotype Comparison Tool) was created by
+[Peter Krusche](https://github.com/pkrusche) at
+[Illumina](https://www.illumina.com/).
 
 ## Prerequisites
 
