@@ -46,4 +46,3 @@ See [`ConfidentRegions/README.md`](ConfidentRegions/README.md) for full details.
 You also need an hg38 reference FASTA with `.fai` and `.dict` index files. This is not included in this repository. Common sources:
 
 - [UCSC hg38](https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/)
-- [Broad Institute hg38 bundle](https://console.cloud.google.com/storage/browser/genomics-public-data/resources/broad/hg38/v0)
