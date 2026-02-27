@@ -94,12 +94,28 @@ def _build_docker_volumes(file_paths, output_path, shared_mount):
 @click.option(
     "-f", "--regions",
     default=None,
-    help="High-confidence regions BED file.",
+    help="High-confidence regions BED file (truth set confident regions).",
+)
+@click.option(
+    "-T", "--targets",
+    default=None,
+    help="Target regions BED file (e.g. exome capture kit targets).",
 )
 @click.option(
     "-o", "--output-prefix",
     default=None,
     help="Output prefix for result files.",
+)
+@click.option(
+    "--engine",
+    type=click.Choice(["vcfeval", "xcmp"], case_sensitive=False),
+    default=None,
+    help="Comparison engine (vcfeval recommended for exome).",
+)
+@click.option(
+    "--pass-only",
+    is_flag=True,
+    help="Only evaluate PASS variants.",
 )
 @click.option(
     "--shared-mount",
@@ -124,8 +140,8 @@ def _build_docker_volumes(file_paths, output_path, shared_mount):
     help="Run in background and log output to happy_YYYYMMDD_HHMMSS.log.",
 )
 @click.pass_context
-def main(ctx, truth_vcf, query_vcf, reference, regions, output_prefix,
-         shared_mount, docker_image, dry_run, background):
+def main(ctx, truth_vcf, query_vcf, reference, regions, targets, output_prefix,
+         engine, pass_only, shared_mount, docker_image, dry_run, background):
     """Compare variant calls against a truth set using hap.py in Docker.
 
     TRUTH_VCF is the truth variant call file.
@@ -149,8 +165,13 @@ def main(ctx, truth_vcf, query_vcf, reference, regions, output_prefix,
 
     regions_path = None
     if regions:
-        regions_path = _resolve_and_validate(regions, "Regions BED")
+        regions_path = _resolve_and_validate(regions, "Confident regions BED")
         file_paths.append(regions_path)
+
+    targets_path = None
+    if targets:
+        targets_path = _resolve_and_validate(targets, "Target regions BED")
+        file_paths.append(targets_path)
 
     output_path = None
     if output_prefix:
@@ -180,8 +201,17 @@ def main(ctx, truth_vcf, query_vcf, reference, regions, output_prefix,
     if regions_path:
         cmd.extend(["-f", path_map[regions_path]])
 
+    if targets_path:
+        cmd.extend(["-T", path_map[targets_path]])
+
     if output_path:
         cmd.extend(["-o", path_map[output_path]])
+
+    if engine:
+        cmd.extend(["--engine", engine])
+
+    if pass_only:
+        cmd.append("--pass-only")
 
     # Pass through any extra arguments to hap.py
     cmd.extend(ctx.args)
