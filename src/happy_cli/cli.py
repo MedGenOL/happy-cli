@@ -3,6 +3,7 @@
 import shutil
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import click
@@ -117,9 +118,14 @@ def _build_docker_volumes(file_paths, output_path, shared_mount):
     is_flag=True,
     help="Print the Docker command without running it.",
 )
+@click.option(
+    "-bg", "--background",
+    is_flag=True,
+    help="Run in background and log output to happy_YYYYMMDD_HHMMSS.log.",
+)
 @click.pass_context
 def main(ctx, truth_vcf, query_vcf, reference, regions, output_prefix,
-         shared_mount, docker_image, dry_run):
+         shared_mount, docker_image, dry_run, background):
     """Compare variant calls against a truth set using hap.py in Docker.
 
     TRUTH_VCF is the truth variant call file.
@@ -183,6 +189,17 @@ def main(ctx, truth_vcf, query_vcf, reference, regions, output_prefix,
     click.echo(" ".join(cmd))
 
     if dry_run:
+        return
+
+    if background:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_file = Path.cwd() / f"happy_{timestamp}.log"
+        with open(log_file, "w") as log:
+            subprocess.Popen(
+                cmd, stdout=log, stderr=log,
+                start_new_session=True,
+            )
+        click.echo(f"Running in background. Log: {log_file}")
         return
 
     result = subprocess.run(cmd)
