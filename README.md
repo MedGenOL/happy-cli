@@ -20,8 +20,11 @@ sequencing technology or protocols change.
 ```bash
 git clone https://github.com/MedGenOL/happy-cli.git
 cd happy-cli
-pip install -e .
+pip3 install -e .
 ```
+
+If `pip3` is not found, install it first with `python3 -m ensurepip --user`
+or your system's package manager.
 
 ## Usage
 
